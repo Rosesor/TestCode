@@ -74,9 +74,8 @@ def get_degree(point_list, point_o):
         if p2[0] < p1[0]:
             p1, p2 = p2, p1
 
-    if degrees <= 45 or degrees >= 45:
-
-    else:
+    up = 0
+    up = rotate_direction()
 
     if up is True and degrees!=0 and degrees != 0.0:
         degrees = 360 - degrees

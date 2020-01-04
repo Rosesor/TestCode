@@ -7,8 +7,9 @@ from train_process_visualize import acc_visualize
 
 # acc_visualize('acc', 1, 1)
 for i in range(0,10):
-    acc_visualize('data/acc', i, i)
+    acc_visualize('xxx/2', i, i, 1, False)
     print(i)
+acc_visualize('xxx/2', i, i, 1, True)
 
 class LeNet5(nn.Module):
     def __init__(self):
