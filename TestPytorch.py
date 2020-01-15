@@ -3,13 +3,24 @@ import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.autograd.variable as Variable
+import cv2
+from PIL import Image, ImageDraw, ImageFont
 from train_process_visualize import acc_visualize
 
-# acc_visualize('acc', 1, 1)
-for i in range(0,10):
-    acc_visualize('xxx/2', i, i, 1, False)
-    print(i)
-acc_visualize('xxx/2', i, i, 1, True)
+import math
+import re
+from PIL import Image, ImageStat, ImageEnhance
+import sys
+
+# 读取图片原有的亮度值
+def brightness(path):
+    im = Image.open(path)
+    stat = ImageStat.Stat(im)
+    r,g,b = stat.mean
+    return math.sqrt(0.241*(r**2) + 0.691*(g**2) + 0.068 *(b**2))
+
+print(brightness('F:\cocoDataAugment\data/rotate/818_0.jpg'))
+
 
 class LeNet5(nn.Module):
     def __init__(self):
@@ -115,3 +126,23 @@ class LeNet5(nn.Module):
 # plt.show()
 #
 #
+# # acc_visualize('acc', 1, 1)
+# p = cv2.imread('F:\cocoDataAugment\data/cat.jpg')
+# cv2.namedWindow('origin', 0)
+# cv2.imshow('origin',p)
+# p = np.array(Image.fromarray(p))
+# p = p.astype(np.float32)/255
+# p = cv2.GaussianBlur(p,(3,3),sigmaX=3)
+# cv2.namedWindow('gaussian', 0)
+# cv2.imshow('gaussian',p)
+# s = cv2.getStructuringElement(cv2.MORPH_RECT,(3,3))
+# p = cv2.erode(p,s)
+# cv2.namedWindow('erode', 0)
+# cv2.imshow('erode',p)
+# p = cv2.dilate(p,s)
+# cv2.namedWindow('dilate', 0)
+# cv2.imshow('dilate',p)
+# p = cv2.morphologyEx(p,cv2.MORPH_CLOSE,s)
+# cv2.namedWindow('morphology', 0)
+# cv2.imshow('morphology',p)
+# cv2.waitKey()
