@@ -77,7 +77,7 @@ class DataAugment(object):
         if self.add_saltNoise:
             # percentage = 0.005
             # percentage = random.choice([0.02, 0.01, 0.03, 0.04, 0.05, 0.06])
-            percentage = 0.03
+            percentage = 0.01
             dst1 = self.src
             # dst4 = self.flip_x_y
             num = int(percentage * self.src.shape[0] * self.src.shape[1])
@@ -133,7 +133,7 @@ if __name__ == "__main__":
     i = 0
     l = len(file_name(source_path))
     # salt 0.05 0.03 0.01 gaussian 3 5 7 9
-    # salt 0.05
+    # salt 0.05 0.03
     for name in enumerate(file_name(source_path)):
         shape_json = []
         m_path = name[1]

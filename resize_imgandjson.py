@@ -7,8 +7,8 @@ import numpy as np
 from PIL import Image
 
 
-source_path = 'F:/cocoDataAugment/data/temp/'
-destination_path = 'F:/cocoDataAugment/data/temp/'
+source_path = 'F:/cocoDataAugment/data/rotate_salt0.05/'
+destination_path = 'F:/cocoDataAugment/data/rotate_salt_5_resize/'
 # source_path = 'F:/cocoDataAugment/data/'
 # destination_path = 'F:/cocoDataAugment/data/'
 new_width = 1280
@@ -90,7 +90,7 @@ for name in enumerate(file_name(source_path)):
     img = cv2.imread(data_path)
     im_resize, resize_w, resize_h, pad_w, pad_h, img_w, img_h, old_size = resize_img(img,1280,1024)
     (filename, extension) = os.path.splitext(data_name)
-    data_new_picture_name = destination_path + "/" + filename + "_resize" + ".jpg"
+    data_new_picture_name = destination_path + "/" + filename + '_5' + "_resize" + ".jpg"
     data_new_json_name = destination_path + "/" + filename + "_resize" + ".json"
     data_json['imagePath'] = filename + "_resize" + ".jpg"
     print(filename)

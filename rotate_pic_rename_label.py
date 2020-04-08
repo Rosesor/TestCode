@@ -13,8 +13,8 @@ from decide_up_or_down import decide_up_or_down
 from check_in_box import check_in_box
 # source_path = 'I:/database/day' # 包含json文件及pic
 # destination_path = 'I:/database/0degree'#存放json及pic
-source_path = 'F:/cocoDataAugment/data/day_singleshot_origin' # 包含json文件及pic
-destination_path = 'F:/cocoDataAugment/data/day_singleshot_0'#存放json及pic
+source_path = 'F:/cocoDataAugment/data/night_singleshot_90' # 包含json文件及pic
+destination_path = 'F:/cocoDataAugment/data/night_singleshot_90'#存放json及pic
 angle = [90, 180, 270]
 
 article_info = {}
@@ -134,90 +134,55 @@ def rotation_point(w, h , angle, point):
     point = np.reshape(point, newshape=(int(len(point) / 4), 8))
     return point
 
-
-def get_o_point(all_point):
-    o = np.array([])
-    for i in range(len(all_point['shapes'])):
-        point = np.array([])
-        assert len(all_point['shapes'][i]['points']) == 4, object_name+'.jpg has more than 4 points'
-        if len(all_point['shapes'][i]['label']) == 8:
-            print(all_point['shapes'][i]['label'])
-            for j in range(0,4):
-                point= np.append(point, all_point['shapes'][i]['points'][j][0])
-                point= np.append(point, all_point['shapes'][i]['points'][j][1])
-            point_list.append(point)
-        elif all_point['shapes'][i]['label']=='o' and len(o)==0:
-            for j in range(0, 4):
-                o = np.append(o, all_point['shapes'][i]['points'][j][0])
-                o = np.append(o, all_point['shapes'][i]['points'][j][1])
-    return o
-
 for name in enumerate(file_name(source_path)):
-    print(name,  name[0]/float(567))
+    print(name)
     shape_json = []
     m_path = name[1]
     dir = os.path.dirname(m_path)
     file_json = io.open(m_path, 'r', encoding='utf-8')
-    pic_name = 'day'+str(name[0]+412)
     json_data = file_json.read()
-    file_json.close()
     data = json.loads(json_data)
-    origin_data = data
     data_json['imageData'] = None
     data_name = data['imagePath']
     data_path = dir + '/' + data_name
     object_name = os.path.splitext(data['imagePath'])[0]
     point_list = []
-    o = get_o_point(data)
 
-    angle_item = get_degree(point_list, o)
+    angle_item = 180
     print('rotate_angel', angle_item)
     img = cv2.imread(data_path)
     im_rotate, newH, newW, orginH, orginW = rotation_img(img, angle_item)
-    # (filename, extension) = os.path.splitext(data_name)
-    filename = pic_name
-    data_new_picture_name = destination_path + "/" + filename + "_0" + ".jpg"
-    data_new_json_name = destination_path + "/" + filename + "_0" + ".json"
-    data_json['imagePath'] = filename + "_0" + ".jpg"
+    (filename, extension) = os.path.splitext(data_name)
+    data_new_picture_name = destination_path + "/" + filename + "_"+ str(angle_item) + ".jpg"
+    data_new_json_name = destination_path + "/" + filename + "_" + str(angle_item) + ".json"
+    data_json['imagePath'] = filename + "_"+ str(angle_item) + ".jpg"
     cv2.imwrite(data_new_picture_name, im_rotate)
-    os.rename(os.path.join(dir,data_name), os.path.join(dir,pic_name+'.jpg'))
-    origin_data['imagePath'] = pic_name+'.jpg'
-    origin_data['imageData'] = None
-    origin_data_info = json.dumps(origin_data, ensure_ascii=False,indent=2)
-    with open(os.path.join(dir,data_name.split('.')[0]+'.json'), "w+") as f:
-        f.write(origin_data_info)
-        f.close()
-    os.rename(os.path.join(dir,data_name.split('.')[0]+'.json'), os.path.join(dir,pic_name+'.json'))
-
     data_json['imageWidth'] = newW
     data_json['imageHeight'] = newH
 
-    #设置新的json文件属性
     for i in range(len(data['shapes'])):
         point = np.array([])
         assert len(data['shapes'][i]['points']) == 4, object_name+'.jpg has more than 4 points'
         for j in range(0, 4):
             point= np.append(point, data['shapes'][i]['points'][j][0])
             point= np.append(point, data['shapes'][i]['points'][j][1])
-        m_name_0 = data['shapes'][i]['label']
+        if '6' in data['shapes'][i]['label'] or '9' in data['shapes'][i]['label']:
+            temp = list(data['shapes'][i]['label'])
+            for j in range(len(temp)):
+                if temp[j] == '6':
+                    temp[j] = '9'
+                elif temp[j] == '9':
+                    temp[j] = '6'
+            temp.reverse()
+            m_name_0 = ''.join(temp)
+        else:
+            m_name_0 = ''.join(reversed(data['shapes'][i]['label']))
+
+
         data_json_line_color = data['shapes'][i]['line_color']
         data_json_fill_color = data['shapes'][i]['fill_color']
-        # data_json_rec = data['shapes'][i]['shape_type']
         data_json_rec = "polygon"
-        # print(point)
         point = rotation_point(orginW, orginH, angle_item, point)
-        # print(point)
-        # img = cv2.imread(data_path)
-        # im_rotate, point = rotation_point(img, angle_item, point)
-        # (filename, extension) = os.path.splitext(data_name)
-        # data_new_picture_name = destination_path + "/" + filename + "_rotate" + ".jpg"
-        # print(data_new_picture_name)
-        # data_new_json_name = destination_path + "/" + filename + "_rotate" + ".json"
-        # data_json['imagePath'] = filename + "_rotate" + ".jpg"
-        # cv2.imwrite(data_new_picture_name, im_rotate)
-        # im_rotate = cv2.imread(data_new_picture_name)
-        # data_json['imageWidth'] = im_rotate.shape[1]
-        # data_json['imageHeight'] = im_rotate.shape[0]
         shape_json_item = {"label": m_name_0,
                            "line_color": data_json_line_color,
                            "fill_color": data_json_fill_color,
@@ -228,7 +193,6 @@ for name in enumerate(file_name(source_path)):
                            "shape_type": data_json_rec}
         shape_json.append(shape_json_item)
     data_json['shapes'] = shape_json
-
     data_info = json.dumps(data_json, ensure_ascii=False,indent=2)
     fp = open(data_new_json_name, "w+")
     fp.write(data_info)
